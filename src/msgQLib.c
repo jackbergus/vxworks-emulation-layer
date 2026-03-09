@@ -50,21 +50,7 @@
 // The actual message storage will be allocated on the heap, and accessed
 // as a ring buffer to minimize copies.
 
-/************************** Helper structs ***********************************/
 
-// Struct for containing the data required to implement our message queues
-typedef struct {
-    sem_t semRecv;
-    sem_t semSend;
-    pthread_mutex_t mutex;
-
-    int numMsgs;
-    int maxMsgs;
-    int maxMsgLength;
-    char* ringBuffer;
-    int start;
-    int end;
-} vxworksMsgQ_t;
 
 /************************ Library functions **********************************/
 

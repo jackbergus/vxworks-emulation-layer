@@ -5,6 +5,23 @@
 
 typedef void* MSG_Q_ID;
 
+/************************** Helper structs ***********************************/
+#include <semaphore.h>
+
+// Struct for containing the data required to implement our message queues
+typedef struct {
+    sem_t semRecv;
+    sem_t semSend;
+    pthread_mutex_t mutex;
+
+    int numMsgs;
+    int maxMsgs;
+    int maxMsgLength;
+    char* ringBuffer;
+    int start;
+    int end;
+} vxworksMsgQ_t;
+
 #define MSG_Q_FIFO      0x00
 #define MSG_Q_PRIORITY  0x01
 
