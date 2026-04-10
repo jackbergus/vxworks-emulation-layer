@@ -4,20 +4,35 @@
 
 #include "cpp/Semaphore.h"
 
-#include "semLib.h"
+extern "C" {
+    #include "semLib.h"
+}
+
 
 Semaphore::Semaphore(int options, uint64_t initialValue) {
     self = semCCreate(options, initialValue);
 }
 
 bool Semaphore::V() {
-    return semGive(self) == 0;
+    if (self) {
+        return semGive(self) == 0;
+    } else
+        return false;
+
 }
 
 bool Semaphore::P(int64_t timeout) {
-    return semTake(self, timeout) == 0;
+    if (self) {
+        return semTake(self, timeout) == 0;
+    } else {
+        return false;
+    }
 }
 
 Semaphore::~Semaphore() {
-    semDelete(self);
+    if (self) {
+        semDelete(self);
+        self = nullptr;
+    }
+
 }

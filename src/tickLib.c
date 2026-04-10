@@ -14,11 +14,20 @@ unsigned long tickGet(void) {
     if (g_lastUpdateTime == NULL) {
         g_lastUpdateTime = (struct timespec*) malloc(sizeof(struct timespec));
 
+#ifdef CLOCK_BOOTTIME
         clock_gettime(CLOCK_BOOTTIME, g_lastUpdateTime);
+#else
+        clock_gettime(CLOCK_REALTIME, g_lastUpdateTime);
+#endif
     }
 
     struct timespec now;
+#ifdef CLOCK_BOOTTIME
     clock_gettime(CLOCK_BOOTTIME, &now);
+#else
+    clock_gettime(CLOCK_REALTIME, &now);
+#endif
+
 
     // In this function, we can rightly (assuming sysLib is implemented
     // correctly) assume that the tick rate has not been modified since

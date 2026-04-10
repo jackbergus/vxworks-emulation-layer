@@ -23,12 +23,21 @@ STATUS sysClkRateSet(int ticksPerSecond) {
     // with being updated by the new clock rate
 
     struct timespec now;
+#ifdef CLOCK_BOOTTIME
     clock_gettime(CLOCK_BOOTTIME, &now);
+#else
+    clock_gettime(CLOCK_REALTIME, &now);
+#endif
 
     if (g_lastUpdateTime == NULL) {
         g_lastUpdateTime = (struct timespec*) malloc(sizeof(struct timespec));
 
+#ifdef CLOCK_BOOTTIME
         clock_gettime(CLOCK_BOOTTIME, g_lastUpdateTime);
+#else
+        clock_gettime(CLOCK_REALTIME, g_lastUpdateTime);
+#endif
+
     }
 
     struct timespec elapsed = _subtractTimespecs(*g_lastUpdateTime, now);
