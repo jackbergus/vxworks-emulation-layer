@@ -8,7 +8,8 @@ add_library(cpp_vxworks STATIC src/cpp/WatchDog.cpp
         src/cpp/VXConcurrentQueue.cpp
         include/cpp/VXConcurrentQueue.h
         src/cpp/Semaphore.cpp
-        include/cpp/Semaphore.h)
+        include/cpp/Semaphore.h
+        include/cpp/Timestamp.h)
 target_link_libraries(cpp_vxworks vxworks)
 
 add_library(vxworks STATIC src/taskLib.c src/sysLib.c src/semLib.c src/helpers.c src/msgQLib.c src/wdLib.c src/tickLib.c)

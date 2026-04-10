@@ -25,3 +25,5 @@ unsigned long _timespecToTicks(struct timespec spec);
  * Helper function to subtract two timespecs
  */
 struct timespec _subtractTimespecs(struct timespec before, struct timespec after);
+
+
