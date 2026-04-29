@@ -4,12 +4,27 @@
 #include <time.h>
 #include "tickLib.h"
 #include <stdlib.h>
+#include <stdint.h>
 
 #define DEFAULT_SYS_CLK_RATE 500
 
 int g_sysClkRate = DEFAULT_SYS_CLK_RATE;
 extern struct timespec* g_lastUpdateTime;
 extern unsigned long g_baseKernelTicks;
+
+#ifdef _MSC_VER
+#include <sysinfoapi.h>
+#define     CLOCK_REALTIME (0)
+int clock_gettime(int, struct timespec*spec) {
+    int64_t wintime;
+    GetSystemTimeAsFileTime((FILETIME*)&wintime);
+    wintime -= 116444736000000000i64;
+    spec->tv_sec = wintime /  10000000i64;
+    spec->tv_nsec = wintime % 10000000i64 * 100;
+    return 0;
+}
+
+#endif
 
 /**************************** Library Functions ******************************/
 
