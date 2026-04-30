@@ -7,7 +7,9 @@
 
 #include <cstdint>
 
+extern "C"{
 #include <msgQLib.h>
+}
 
 class VXConcurrentQueue {
     void* self;

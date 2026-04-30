@@ -1,16 +1,22 @@
 #include "wdLib.h"
 #include "helpers.h"
 #include <signal.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
 #include <sys/types.h>
 
+// TODO: in windows, use waitable timers
+
 /************************** Helper structs ***********************************/
 
+#if defined(_WIN64) || defined(_WIN32)
+#else
 typedef struct {
     timer_t* inner;
 } vxworksWdTimer_t;
+#endif
 
 typedef struct {
     void* timerArg;
@@ -24,6 +30,9 @@ void _timerPreFunction(union sigval);
 /************************ Library functions **********************************/
 
 WDOG_ID wdCreate(void) {
+#if defined(_WIN64) || defined(_WIN32)
+    return CreateWaitableTimer(NULL, TRUE, NULL);
+#else
     // POSIX timers need a routine that should be called to be specified
     // when the timer is created instead of timer start time.
     //
@@ -36,9 +45,13 @@ WDOG_ID wdCreate(void) {
     timer->inner = NULL;
 
     return (void*) timer;
+#endif
 }
 
 STATUS wdDelete(WDOG_ID wdId) {
+#if defined(_WIN64) || defined(_WIN32)
+    return CloseHandle(wdId) ? VX_OK : VX_ERROR;
+#else
     vxworksWdTimer_t* timer = (vxworksWdTimer_t*) wdId;
     int status = 0;
 
@@ -54,9 +67,23 @@ STATUS wdDelete(WDOG_ID wdId) {
     free((void*) timer);
 
     return status;
+#endif
 }
 
 STATUS wdStart(WDOG_ID wdId, int delay, FUNCPTR pRoutine, size_t parameter) {
+#if defined(_WIN64) || defined(_WIN32)
+    if (wdId == NULL) {
+        return VX_ERROR;
+    }
+
+    LARGE_INTEGER   liDueTime;
+    struct timespec spec = _ticksToTimespec(delay);
+    uint64_t val = spec.tv_sec * NANOSECONDS_PER_SECOND/100 + spec.tv_nsec/100;
+    liDueTime.LowPart  = (DWORD) ( val & 0xFFFFFFFF );
+    liDueTime.HighPart = (LONG)  ( val >> 32 );
+
+    return SetWaitableTimer(wdId, &liDueTime, 0, (PTIMERAPCROUTINE)pRoutine, (LPVOID)parameter, false) ? VX_OK : VX_ERROR;
+#else
     vxworksWdTimer_t* timer = (vxworksWdTimer_t*) wdId;
 
     if (timer == NULL) {
@@ -119,9 +146,13 @@ STATUS wdStart(WDOG_ID wdId, int delay, FUNCPTR pRoutine, size_t parameter) {
     timer_value.it_value = it_value;
 
     return timer_settime(*(timer->inner), 0, &timer_value, NULL);
+#endif
 }
 
 STATUS wdCancel(WDOG_ID wdId) {
+#if defined(_WIN64) || defined(_WIN32)
+    return CloseHandle(wdId) ? VX_OK : VX_ERROR;
+#else
     // We sort of have to delete the timer here, because if the user wishes
     // to wdStart() the timer again, then they may supply a different pRoutine
     //
@@ -141,12 +172,12 @@ STATUS wdCancel(WDOG_ID wdId) {
 
     free((void*) timer->inner);
     timer->inner = NULL;
-
     return 0;
+#endif
 }
 
 /************************** Helper functions ***********************************/
-
+#if !(defined(_WIN64) || defined(_WIN32))
 void _timerPreFunction(union sigval value) {
     vxworksWdTimerPreArgs_t* preArgs = value.sival_ptr;
     void (*callback)(void*) = (void (*)(void*)) preArgs->callback;
@@ -156,3 +187,4 @@ void _timerPreFunction(union sigval value) {
 
     callback(argument);
 }
+#endif

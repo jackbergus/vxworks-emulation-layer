@@ -1,7 +1,12 @@
+#if defined(WIN32)||defined(WIN64)
+#include <windows.h>
+#endif
 #include <tickLib.h>
 #include "helpers.h"
 #include <time.h>
 #include <stdlib.h>
+
+#include "sysLib.h"
 
 // BE WARNED: Global variables
 

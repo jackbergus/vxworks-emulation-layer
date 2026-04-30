@@ -3,7 +3,12 @@
 #include "vxworks.h"
 #include <stddef.h>
 
-typedef void* WDOG_ID;
+#if defined(_WIN64) || defined(_WIN32)
+#include <windows.h>
+typedef HANDLE  WDOG_ID;
+#else
+typedef void*   WDOG_ID;
+#endif
 
 /**
  * Create a new VxWorks style watchdog timer

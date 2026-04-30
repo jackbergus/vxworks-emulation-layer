@@ -138,7 +138,7 @@ STATUS msgQDelete(MSG_Q_ID msgQId) {
     return status;
 }
 
-STATUS msgQSend(MSG_Q_ID msgQId, char* buffer, uint nBytes, int timeout, int priority) {
+STATUS msgQSend(MSG_Q_ID msgQId, char* buffer, unsigned int nBytes, int timeout, int priority) {
     // take semSend
     // take mutex
     // do operation
@@ -215,7 +215,7 @@ STATUS msgQSend(MSG_Q_ID msgQId, char* buffer, uint nBytes, int timeout, int pri
     return 0;
 }
 
-STATUS msgQReceive(MSG_Q_ID msgQId, char* buffer, uint maxNBytes, int timeout) {
+STATUS msgQReceive(MSG_Q_ID msgQId, char* buffer, unsigned int maxNBytes, int timeout) {
     // take semRecv
     // take mutex
     // do operation

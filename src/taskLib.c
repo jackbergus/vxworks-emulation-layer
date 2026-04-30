@@ -1,3 +1,6 @@
+#if defined(WIN32)||defined(WIN64)
+#include <windows.h>
+#endif
 #include "taskLib.h"
 #include "sysLib.h"
 #include "helpers.h"
@@ -124,12 +127,14 @@ STATUS taskDelay(int ticks) {
     struct timespec remaining;
 
     int success = EINTR;
-
+#ifdef USE_MANUAL_NANOSLEEP
+    return nanosleep(spec.tv_sec * NANOSECONDS_PER_SECOND + spec.tv_nsec) ? VX_OK : VX_ERROR;
+#else
     while (success == EINTR) {
         success = nanosleep(&spec, &remaining);
-
         spec = remaining;
     }
+#endif
 
     return success;
 }

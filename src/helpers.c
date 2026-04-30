@@ -1,3 +1,7 @@
+#if defined(WIN32)||defined(WIN64)
+#include <windows.h>
+#endif
+
 #include "helpers.h"
 #include "sysLib.h"
 

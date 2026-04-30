@@ -3,6 +3,8 @@
 #include "vxworks.h"
 #include <sys/types.h>
 
+#include "pthread.h"
+
 typedef void* MSG_Q_ID;
 
 /************************** Helper structs ***********************************/
@@ -41,12 +43,12 @@ STATUS msgQDelete(MSG_Q_ID msgQId);
 /**
  * Sends a message on a message queue
  */
-STATUS msgQSend(MSG_Q_ID msgQId, char* buffer, uint nBytes, int timeout, int priority);
+STATUS msgQSend(MSG_Q_ID msgQId, char* buffer, unsigned int nBytes, int timeout, int priority);
 
 /**
  * Receives a message on a message queue
  */
-STATUS msgQReceive(MSG_Q_ID msgQId, char* buffer, uint maxNBytes, int timeout);
+STATUS msgQReceive(MSG_Q_ID msgQId, char* buffer, unsigned int maxNBytes, int timeout);
 
 /**
  * Get the number of messages queued to a message queue, or -1 if error

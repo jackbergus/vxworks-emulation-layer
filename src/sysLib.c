@@ -1,3 +1,6 @@
+#if defined(WIN32)||defined(WIN64)
+#include <windows.h>
+#endif
 #include "sysLib.h"
 #include "helpers.h"
 #include <stddef.h>
@@ -12,19 +15,7 @@ int g_sysClkRate = DEFAULT_SYS_CLK_RATE;
 extern struct timespec* g_lastUpdateTime;
 extern unsigned long g_baseKernelTicks;
 
-#ifdef _MSC_VER
-#include <sysinfoapi.h>
-#define     CLOCK_REALTIME (0)
-int clock_gettime(int, struct timespec*spec) {
-    int64_t wintime;
-    GetSystemTimeAsFileTime((FILETIME*)&wintime);
-    wintime -= 116444736000000000i64;
-    spec->tv_sec = wintime /  10000000i64;
-    spec->tv_nsec = wintime % 10000000i64 * 100;
-    return 0;
-}
 
-#endif
 
 /**************************** Library Functions ******************************/
 

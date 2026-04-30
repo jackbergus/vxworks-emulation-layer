@@ -2,9 +2,10 @@
 // Created by gyankos on 06/03/26.
 //
 
-#include "../../include/cpp/VXConcurrentQueue.h"
-#include <msgQLib.h>
-
+#include <cpp/VXConcurrentQueue.h>
+extern "C" {
+    #include <msgQLib.h>
+}
 VXConcurrentQueue::VXConcurrentQueue(int maxMsgs, int maxMsgLength, int options) {
     self = msgQCreate(maxMsgs, maxMsgLength, options);
 }
