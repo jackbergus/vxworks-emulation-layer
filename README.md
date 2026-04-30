@@ -1,12 +1,11 @@
 # VxWorks Emulation Repository for our Real-Time Embedded Systems Final Project
 
-This repository contains a shiny new VxWorks emulation layer for testing
-code on Linux.
-
-This code is more of a proof of concept and prototype rather than something that
-should be used for rigorous testing.
+This repository contains a shiny new VxWorks emulation layer for using the VxWorks APIs in both Linux and Windows.
+While the original repository was in Linux, I added some minor tweaks to support the same API. Some of this required the porting of the PThread library to Windows which, still, was alreday available on GitHub.
 
 ## VxWorks Emulation Layer Roadmap
+
+This is the set of features originally implemented. The features on Windows are yet to be tested (i.e., they were mainly imported to allow the code to compile).
 
 - [x] sysLib
     - [x] sysClkRateGet()
@@ -53,3 +52,4 @@ should be used for rigorous testing.
     - [x] kill()
 - [x] tickLib
     - [x] tickGet()
+
