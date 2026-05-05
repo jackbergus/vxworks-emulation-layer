@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include <time.h>
 
 #define NANOSECONDS_PER_SECOND 1000000000
@@ -26,8 +27,18 @@ unsigned long _timespecToTicks(struct timespec spec);
  */
 struct timespec _subtractTimespecs(struct timespec before, struct timespec after);
 
+#include <stdint.h>
+
 #if __has_include(<pthread_time.h>)
 #include <pthread_time.h>
+
+static inline int MYUSleep(uint64_t usec) {
+    struct timespec spec, remaining;
+    spec.tv_sec = usec / NANOSECONDS_PER_SECOND;
+    spec.tv_nsec = usec % NANOSECONDS_PER_SECOND;
+    return nanosleep(&spec, &remaining) ? 1 : 0;
+}
+
 #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(WIN64)
 #include <windows.h>
 #define USE_MANUAL_NANOSLEEP 1
@@ -44,6 +55,21 @@ static inline BOOLEAN nanosleep(LONGLONG ns) {
     WaitForSingleObject(timer, INFINITE);
     CloseHandle(timer);
     return TRUE;
+}
+
+static inline int MYUSleep(uint64_t usec) {
+    return nanosleep(usec) == TRUE ? 1 : 0;
+}
+
+#elif __has_include(<time.h>)
+
+#include <time.h>
+
+static inline int MYUSleep(uint64_t usec) {
+    struct timespec spec, remaining;
+    spec.tv_sec = usec / NANOSECONDS_PER_SECOND;
+    spec.tv_nsec = usec % NANOSECONDS_PER_SECOND;
+    return nanosleep(&spec, &remaining) ? 1 : 0;
 }
 
 #endif
