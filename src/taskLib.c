@@ -141,6 +141,8 @@ STATUS taskDelay(int ticks) {
 
 /************************ Helper functions ***********************************/
 
+typedef int (*FUNCPTRARG10)(size_t,size_t,size_t,size_t,size_t,size_t,size_t,size_t,size_t,size_t);
+
 /**
  * The entry point of all threads spawned using this API. The purpose of this
  * is to allow multiple (10 to be exact) arguments to be passed to a thread's
@@ -162,7 +164,7 @@ void* _preEntryPoint(void* args) {
 
     // Yes this looks awful, but this copies all of the values into this
     // function so that we can free the vxworksTaskArgs_t structure
-    FUNCPTR entryPt = taskArgs->realEntryPt;
+    FUNCPTRARG10 entryPt = (FUNCPTRARG10)taskArgs->realEntryPt;
     size_t arg1 = taskArgs->arg1;
     size_t arg2 = taskArgs->arg2;
     size_t arg3 = taskArgs->arg3;
